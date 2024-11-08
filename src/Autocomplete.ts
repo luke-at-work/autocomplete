@@ -367,18 +367,26 @@ export default class Autocomplete
         this.selectedIndex = -1;
     }
 
-    addSuggestionFocusedClassName = (suggestion:HTMLElement)=> {
+    addSuggestionFocusedClassName = (suggestion: HTMLElement) => {
         suggestion.classList.add(this.attributeValues.suggestionFocusedClassName);
-    }
-
-    removeSuggestionFocusedClassName = (suggestions: HTMLCollection)=> {
-        
-        for (let i = 0; i < suggestions.length; i++) {
-            suggestions[i].classList.remove(this.attributeValues.suggestionFocusedClassName);
+        if (this.attributeValues.suggestionFocusedAdditionalClassNames) {
+            for (const name of this.attributeValues.suggestionFocusedAdditionalClassNames) {
+                suggestion.classList.add(name);
+            }
         }
     }
 
-    
+    removeSuggestionFocusedClassName = (suggestions: HTMLCollection) => {
+        for (let i = 0; i < suggestions.length; i++) {
+            suggestions[i].classList.remove(this.attributeValues.suggestionFocusedClassName);
+            if (this.attributeValues.suggestionFocusedAdditionalClassNames) {
+                for (const name of this.attributeValues.suggestionFocusedAdditionalClassNames) {
+                    suggestions[i].classList.remove(name);
+                }
+            }
+        }
+    }
+
     populateList = async (show_all:boolean = this.attributeValues.options.show_all_for_postcode ?? Options.show_all_for_postcode_defaut)=>{
             
             const autocompleteOptions:Partial<AutocompleteOptions> = {
@@ -424,15 +432,15 @@ export default class Autocomplete
                     }
 
                     this.list.element.replaceChildren(...newItems);
-                    
+
                     const toFocus = this.list.element.children[0] as HTMLElement;
                     if (toFocus) {
                         this.selectedIndex = 0;
-                        toFocus.classList.add(this.attributeValues.suggestionFocusedClassName);
+                        this.addSuggestionFocusedClassName(toFocus);
                     }
 
                     this.input.addInputShowClassNames();
-                        
+
                     this.list.element.hidden = false;
                     this.input.element.setAttribute('aria-expanded', 'true');
                     this.list.element.setAttribute('aria-hidden', 'false');
