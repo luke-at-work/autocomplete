@@ -262,10 +262,10 @@ export default class Autocomplete
 
     handleKeyDownDefault = (event: KeyboardEvent)=>
     {
-        let isPrintableKey = event.key.length === 1 || event.key === 'Unidentified';
+        let isPrintableKey = event.key && (event.key.length === 1 || event.key === 'Unidentified');
         if(isPrintableKey){
             clearTimeout(this.filterTimer);
-            
+
             this.filterTimer = setTimeout(() => 
             {
                 if(this.attributeValues.options.minimum_characters && this.input.hasMinimumCharacters()){
